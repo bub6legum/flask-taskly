@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskly - Flask Todo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Taskly</h1>
+        <p class="subtitle">Simple todo list with Flask</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST" class="add-form">
+            <input type="text" name="content" placeholder="What needs to be done?" required>
+            <button type="submit">Add Task</button>
+        </form>
+
+        <ul class="task-list">
+            {% for task in tasks %}
+            <li class="{% if task.completed %}completed{% endif %}">
+                <span class="task-content">{{ task.content }}</span>
+                <div class="actions">
+                    <a href="{{ url_for('complete', task_id=task.id) }}" 
+                       class="btn complete-btn">
+                        {{ '✓' if task.completed else '○' }}
+                    </a>
+                    <a href="{{ url_for('delete', task_id=task.id) }}" 
+                       class="btn delete-btn" 
+                       onclick="return confirm('Delete this task?')">Delete</a>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+
+        {% if not tasks %}
+        <p class="empty">No tasks yet. Add one above!</p>
+        {% endif %}
+    </div>
+</body>
+</html>
